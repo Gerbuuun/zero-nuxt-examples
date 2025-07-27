@@ -1,5 +1,13 @@
 # Zero Nuxt Examples
 
+Here are some examples of how to use Zero with Nuxt where based on the route, we create a new Zero client.
+
+There are three methods of doing this:
+
+1. Using a composable (`app/composables/zero-composable.ts`)
+2. Using a provider component (`app/components/ZeroProvider.vue` and `app/composables/zero-provider.ts`)
+3. Using a plugin (`app/plugins/zero.ts` and `app/composables/zero-plugin.ts`)
+
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup

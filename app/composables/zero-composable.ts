@@ -1,26 +1,41 @@
 import { Zero } from "@rocicorp/zero";
 import { schema, type Schema } from "~/zero/schema";
 
-const composable = () => {
-  const route = useRoute();
-  const orgId = computed(() => route.params.orgId as string);
+let client: Zero<Schema>;
+let currentOrgId: string;
 
-  const z = shallowRef<Zero<Schema>>(null!);
+export const useZeroComposable = () => {
+  const route = useRoute();
+  const orgId = computed(() => route.params.orgId as string | undefined);
+
+  if (!orgId.value) {
+    throw new Error(`Can't use zero composable outside of a route with an orgId`);
+  }
+  
+  const clientRef = shallowRef<Zero<Schema>>(client!);
 
   watch(orgId, () => {
-    if (z.value && !z.value.closed) {
-      z.value.close();
+    const newOrgId = orgId.value || 'anon';
+    
+    if (currentOrgId === newOrgId && client && !client.closed)
+      return;
+
+    if (client && !client.closed) {
+      client.close();
     }
-    z.value = new Zero({
-      userID: orgId.value || 'anon',
-      auth: () => orgId.value || undefined,
+
+    const newClient = new Zero({
+      userID: newOrgId,
+      auth: () => newOrgId !== 'anon' ? newOrgId : undefined,
       server: import.meta.client ? 'http://localhost:4849' : undefined,
       schema,
       kvStore: 'mem',
     });
+
+    client = newClient;
+    clientRef.value = client;
+    currentOrgId = newOrgId;
   }, { immediate: true });
 
-  return z;
-}
-
-export const useZeroComposable = createSharedComposable(composable);
+  return clientRef;
+};

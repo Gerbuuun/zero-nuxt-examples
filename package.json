@@ -24,8 +24,6 @@
   },
   "devDependencies": {
     "@rocicorp/zero": "0.20.2025052100",
-    "@vueuse/core": "^13.5.0",
-    "@vueuse/nuxt": "^13.5.0",
     "zero-vue": "^0.3.1"
   }
 }
